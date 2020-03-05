@@ -1,5 +1,14 @@
 package activitat5;
 
+import damas.entity.Moviments;
+import damas.entity.MovimentsId;
+import damas.entity.Partida;
+import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.hibernate.Session;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,6 +19,7 @@ package activitat5;
  *
  * @author Alumne
  */
+
 public class Activitat5GUITable extends javax.swing.JFrame {
 
     /**
@@ -17,12 +27,21 @@ public class Activitat5GUITable extends javax.swing.JFrame {
      */
     public Activitat5GUITable() {
         initComponents();
+        Session session = (Session)damas.util.HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        session.save(p);
+        session.getTransaction().commit();
+        session.close();
     }
 
     private boolean jugaX = true;
     private boolean jugaO = false;
     int filaOrigen = -1;
     int columnaOrigen = -1;
+    int numMoviments = 0;
+    String guanyador = "Empat";
+    Partida p = new Partida(new Date(), numMoviments, guanyador);
+    List<Moviments> listMoviments = new ArrayList<>();
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -121,6 +140,33 @@ public class Activitat5GUITable extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        
+        this.setVisible(false);
+        Activitat5GUI gui = new Activitat5GUI();
+        gui.setVisible(true);
+        Session session = (Session)damas.util.HibernateUtil.getSessionFactory().openSession();
+        
+        session.beginTransaction();
+        session.update(p);
+        session.getTransaction().commit();
+        
+        //
+        for (int i = 0; i < listMoviments.size(); i++) {
+            
+            session.beginTransaction();
+            session.save(listMoviments.get(i));
+            session.getTransaction().commit();
+        }
+//        for (Moviments mov : listMoviments) {
+//            
+//            session.beginTransaction();
+//            session.update(mov);
+//            session.getTransaction().commit();
+//        }
+        session.close();
+        
+        //
+        //invokeAndWait(()->Thread.sleep(500));
     }//GEN-LAST:event_jButton3ActionPerformed
 
     boolean missatge = false;
@@ -352,6 +398,27 @@ public class Activitat5GUITable extends javax.swing.JFrame {
         cambiarJugador();
         filaOrigen = -1;
         columnaOrigen = -1;
+        numMoviments++;
+        
+        String taula = "";
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                
+                if (jTable1.getValueAt(i, j) == null) {
+                    
+                    taula += " ";
+                } else if (((String) jTable1.getValueAt(i, j)).equals("O")) {
+                    
+                    taula += "O";
+                    
+                } else {
+                    
+                    taula += "X";
+                }
+            }
+        }
+        p.setNumeroMoviments(p.getNumeroMoviments()+1);
+        listMoviments.add(new Moviments(new MovimentsId(p.getNumeroPartida(), numMoviments), taula));
     }
 
     private void cambiarJugador() {
