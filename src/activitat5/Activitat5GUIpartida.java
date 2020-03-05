@@ -136,9 +136,11 @@ public class Activitat5GUIpartida extends javax.swing.JFrame {
         gui.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    // Creem la plantilla de les QUERY
     private static String QUERY_BASED_ON_NUMMOVIEMNTS="select p.numeroMoviments from Partida p where p.numeroPartida = '";
     private static String QUERY_BASED_ON_TABLE="select m.taula from Moviments m where m.id.numeroPartida = '";
     
+    // Metode que fa la query que retorna el numero de moviments de la partida
     private int runQueryBasedOnNumMoviments() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
@@ -147,6 +149,7 @@ public class Activitat5GUIpartida extends javax.swing.JFrame {
         return (int) resultList.get(0);
     }
     
+    // Metode que fa la query per a obtenir el string amb la taula del moviment especificat
     private String runQueryBasedOnTable(int i) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
@@ -156,24 +159,28 @@ public class Activitat5GUIpartida extends javax.swing.JFrame {
     }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        // Guardem el numero de moviments de la partida
         int numMov = runQueryBasedOnNumMoviments();
         
+        // Per cada moviment
         for (int i = 0; i < numMov; i++) {
             
+            // Guardem la taula en un string
             String stringTaula = runQueryBasedOnTable(i+1);
-            String[][] taula = new String[8][8];
+            // Creem contador
             int contador = 0;
-            for (int j = 0; j < 8; j++) {
-                
+            
+            // Per cada fila i columna agafem el valor de la taula i el carreguem a la JTable
+            // i incrementem el contador
+            for (int j = 0; j < 8; j++) {    
                 for (int k = 0; k < 8; k++) {
-                 taula[j][k] = String.valueOf(stringTaula.charAt(contador));
-                 jTable1.setValueAt(String.valueOf(taula[j][k]), j, k);
+                 jTable1.setValueAt(String.valueOf(stringTaula.charAt(contador)), j, k);
                  contador++;
                 }
             }
+            // Esperem per a que carregui pero no funciona tan sols es mostra el moviment final
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Activitat5GUIpartida.class.getName()).log(Level.SEVERE, null, ex);
             }

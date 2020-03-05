@@ -25,8 +25,11 @@ public class Activitat5GUITable extends javax.swing.JFrame {
     /**
      * Creates new form Activitat5GUI
      */
+    
+    
     public Activitat5GUITable() {
         initComponents();
+        // Guardem la partida per a poder guardar els moviments
         Session session = (Session)damas.util.HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
         session.save(p);
@@ -40,7 +43,9 @@ public class Activitat5GUITable extends javax.swing.JFrame {
     int columnaOrigen = -1;
     int numMoviments = 0;
     String guanyador = "Empat";
+    // Creem el objecte Partida
     Partida p = new Partida(new Date(), numMoviments, guanyador);
+    // Creem una lista en la que guardarem els moviments
     List<Moviments> listMoviments = new ArrayList<>();
     /**
      * This method is called from within the constructor to initialize the form.
@@ -141,32 +146,27 @@ public class Activitat5GUITable extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         
+        // Cuan cliquem al boto de sortir cambia la finestra
         this.setVisible(false);
         Activitat5GUI gui = new Activitat5GUI();
         gui.setVisible(true);
-        Session session = (Session)damas.util.HibernateUtil.getSessionFactory().openSession();
         
+        // Actualitzem la partida
+        Session session = (Session)damas.util.HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
         session.update(p);
         session.getTransaction().commit();
         
-        //
+        // Guardem cada moviment
         for (int i = 0; i < listMoviments.size(); i++) {
             
             session.beginTransaction();
             session.save(listMoviments.get(i));
             session.getTransaction().commit();
         }
-//        for (Moviments mov : listMoviments) {
-//            
-//            session.beginTransaction();
-//            session.update(mov);
-//            session.getTransaction().commit();
-//        }
+
+        // Tanquem sesio
         session.close();
-        
-        //
-        //invokeAndWait(()->Thread.sleep(500));
     }//GEN-LAST:event_jButton3ActionPerformed
 
     boolean missatge = false;
@@ -417,6 +417,7 @@ public class Activitat5GUITable extends javax.swing.JFrame {
                 }
             }
         }
+        // Actualitzem numero de moviments de la partida i afegim un moviment a la llista
         p.setNumeroMoviments(p.getNumeroMoviments()+1);
         listMoviments.add(new Moviments(new MovimentsId(p.getNumeroPartida(), numMoviments), taula));
     }
